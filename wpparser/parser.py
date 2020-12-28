@@ -26,7 +26,7 @@ DC_NAMESPACE = "http://purl.org/dc/elements/1.1/"
 WP_NAMESPACE = "http://wordpress.org/export/1.2/"
 
 
-def parse(path):
+def parse(path, metadata_keys=None):
     """
     Parses xml and returns a formatted dict.
 
@@ -113,7 +113,7 @@ def parse(path):
     authors = _parse_authors(channel)
     categories = _parse_categories(channel)
     tags = _parse_tags(channel)
-    posts = _parse_posts(channel)
+    posts = _parse_posts(channel, metadata_keys)
 
     return {
         "blog": blog,
@@ -245,7 +245,7 @@ def _parse_tags(element):
     return tags
 
 
-def _parse_posts(element):
+def _parse_posts(element, metadata_keys=None):
     """
     Returns a list with posts.
     """
@@ -310,14 +310,14 @@ def _parse_posts(element):
             "tags": tags,
         }
 
-        post["postmeta"] = _parse_postmeta(item)
+        post["postmeta"] = _parse_postmeta(item, metadata_keys)
         post["comments"] = _parse_comments(item)
         posts.append(post)
 
     return posts
 
 
-def _parse_postmeta(element):
+def _parse_postmeta(element, metadata_keys=None):
     import phpserialize
 
     """
@@ -331,6 +331,8 @@ def _parse_postmeta(element):
         key = field.find("./{%s}meta_key" % WP_NAMESPACE).text
         value = field.find("./{%s}meta_value" % WP_NAMESPACE).text
 
+        if metadata_keys and key in metadata_keys:
+            metadata[key] = value
         if key == "_wp_attachment_metadata":
             stream = StringIO(value.encode())
             try:
