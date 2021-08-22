@@ -27,6 +27,7 @@ WP_NAMESPACE = "http://wordpress.org/export/1.2/"
 
 
 def parse(path, metadata_keys=None):
+    print('here we are')
     """
     Parses xml and returns a formatted dict.
 
@@ -265,6 +266,7 @@ def _parse_posts(element, metadata_keys=None):
         post_id = item.find("./{%s}post_id" % WP_NAMESPACE).text
         post_date = item.find("./{%s}post_date" % WP_NAMESPACE).text
         post_date_gmt = item.find("./{%s}post_date_gmt" % WP_NAMESPACE).text
+        post_modified_gmt = item.find("./{%s}post_modified_gmt" % WP_NAMESPACE).text
         status = item.find("./{%s}status" % WP_NAMESPACE).text
         post_parent = item.find("./{%s}post_parent" % WP_NAMESPACE).text
         menu_order = item.find("./{%s}menu_order" % WP_NAMESPACE).text
@@ -298,6 +300,7 @@ def _parse_posts(element, metadata_keys=None):
             "post_id": post_id,
             "post_date": post_date,
             "post_date_gmt": post_date_gmt,
+            "post_modified_gmt": post_modified_gmt,
             "status": status,
             "post_parent": post_parent,
             "menu_order": menu_order,
